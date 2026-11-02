@@ -1,0 +1,55 @@
+{
+  "name": "codex-timer-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "description": "面向 Codex 用户的本地定时与任务看守助手",
+  "main": "src/main.cjs",
+  "author": "Codex Timer Assistant",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test tests/*.test.mjs",
+    "smoke": "node scripts/ui-scene-smoke.cjs",
+    "pack": "electron-builder --win dir --x64 --publish never",
+    "dist": "electron-builder --win portable --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "45.0.0",
+    "electron-builder": "26.18.0",
+    "playwright-core": "1.64.1"
+  },
+  "build": {
+    "appId": "local.codex.timer.assistant",
+    "productName": "Codex定时助手",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "!src/adapters/ocr.mjs",
+      "!src/native/ocr*.ps1",
+      "ui/**/*",
+      "assets/**/*",
+      "package.json",
+      "README.md",
+      "LICENSE",
+      "THIRD-PARTY-NOTICES.md"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "src/native/**"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "assets/app-icon.png",
+      "signExecutable": false
+    },
+    "artifactName": "Codex定时助手-${version}-${arch}.${ext}"
+  },
+  "dependencies": {
+    "@carboneio/image-size": "3.0.1",
+    "stream-json": "3.7.0"
+  }
+}

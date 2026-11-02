@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Codex 定时助手</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="ron-theme.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-symbol" data-icon="clock-3"></span><div><strong>Codex</strong><span>定时助手</span></div></div>
+    <nav aria-label="主导航">
+      <button class="nav-item selected" data-view="tasks" aria-label="任务计划"><span data-icon="layers"></span><span class="nav-text">任务计划</span><b id="nav-count">0</b></button>
+      <button class="nav-item" data-view="history" aria-label="执行记录"><span data-icon="list"></span><span class="nav-text">执行记录</span></button>
+      <button class="nav-item" data-view="settings" aria-label="连接与设置"><span data-icon="settings-2"></span><span class="nav-text">连接与设置</span></button>
+    </nav>
+    <div class="sidebar-footer"><span class="local-dot"></span><span>本机运行</span></div>
+  </aside>
+  <div class="workspace">
+    <header class="titlebar">
+      <span id="view-title" class="sr-only">任务计划</span>
+      <div class="window-buttons">
+        <button id="show-orb" class="orb-toggle" title="显示倒计时悬浮球" aria-label="显示悬浮球"><span data-icon="circle-dot"></span><span>悬浮球</span></button>
+        <span class="window-divider"></span>
+        <button data-window="minimize" title="最小化" aria-label="最小化"><span data-icon="minus"></span></button>
+        <button data-window="maximize" title="展开或还原窗口" aria-label="展开或还原窗口"><span data-icon="square"></span></button>
+        <button data-window="close" class="close-window" title="关闭到托盘" aria-label="关闭到托盘"><span data-icon="x"></span></button>
+      </div>
+    </header>
+    <main>
+      <div id="scheduler-error" class="system-alert hidden" role="alert"><div><strong>自动调度已停止</strong><p id="scheduler-error-text"></p></div><button class="secondary" id="retry-scheduler">检查并恢复调度</button></div>
+      <section id="view-tasks" class="view">
+        <div class="page-heading"><h1>任务计划</h1><div class="heading-actions"><button class="secondary" id="refresh-quota" title="刷新官方额度，每 15 秒自动同步"><span data-icon="refresh-cw"></span>刷新额度</button><button class="primary" id="new-task"><span data-icon="plus"></span>新建任务</button></div></div>
+        <div class="connection-strip">
+          <button class="connection-summary" id="connection-details" title="查看连接与设置"><span class="connection-led" id="connection-led"></span><span><strong id="connection-title">正在检查连接</strong><span id="connection-subtitle">连接本机 Codex</span></span><span class="connection-chevron" data-icon="chevron-right"></span></button>
+          <div class="quota-summary" id="quota-primary-card"><div class="quota-row"><span id="quota-primary-label">额度剩余</span><strong id="quota-primary">—</strong></div><div class="quota-track"><span id="quota-primary-bar"></span></div><div class="quota-reset"><span id="quota-primary-reset">等待同步</span><span id="quota-primary-countdown"></span></div></div>
+          <div class="quota-summary weekly" id="quota-secondary-card"><div class="quota-row"><span id="quota-secondary-label">额度剩余</span><strong id="quota-secondary">—</strong></div><div class="quota-reset"><span id="quota-secondary-reset">等待同步</span><span id="quota-secondary-countdown"></span></div></div>
+        </div>
+        <article id="next-panel" class="next-card glass hidden">
+          <div class="countdown-visual"><svg viewBox="0 0 144 144" aria-hidden="true"><circle class="ring-track" cx="72" cy="72" r="63"/><circle class="ring-progress" id="hero-ring" cx="72" cy="72" r="63"/></svg><div class="countdown-center"><strong id="hero-countdown">--:--:--</strong></div></div>
+          <div class="next-info"><div class="next-label"><span id="countdown-label">下一次执行</span><span class="pill" id="next-state">已安排</span></div><h2 id="next-title"></h2><p id="next-subtitle"></p><div class="next-meta"><span id="hero-due"></span><span id="next-meta"></span></div></div>
+        </article>
+        <div class="tasks-panel glass">
+          <div class="section-toolbar">
+            <div class="filters" role="tablist" aria-label="筛选任务"><button class="filter selected" data-filter="all" role="tab" aria-selected="true">全部任务 <span id="all-count">0</span></button><button class="filter" data-filter="active" role="tab" aria-selected="false" title="包含已启用的等待发送、等待额度及看守任务">已启用 <span id="active-count">0</span></button><button class="filter" data-filter="attention" role="tab" aria-selected="false">需要处理 <span id="attention-count">0</span></button></div>
+            <button class="quiet-button" id="pause-all"><span data-icon="pause"></span><span id="pause-all-label">暂停全部</span></button>
+          </div>
+          <div id="task-list" class="task-list"></div>
+          <div id="empty-state" class="empty-state">
+            <div class="empty-illustration" aria-hidden="true"><span data-icon="clock-3"></span></div>
+            <div class="empty-copy"><h3>添加第一个任务</h3><p>选择聊天，设置发送时间或看守规则。</p></div>
+            <div class="empty-actions"><button class="primary" id="add-link">选择聊天</button><button class="secondary hidden" id="show-all-tasks">查看全部任务</button></div>
+          </div>
+        </div>
+        <div class="footer-note hidden" id="test-indicator"></div>
+      </section>
+      <section id="view-history" class="view hidden">
+        <div class="page-heading history-heading"><h1>执行记录</h1><div class="heading-actions"><button class="secondary" id="export-logs">导出记录</button><button class="secondary" id="clear-logs" disabled>清空记录</button></div></div>
+        <div class="glass history-panel">
+          <div class="history-toolbar" role="group" aria-label="记录筛选"><button class="history-filter selected" data-log-filter="all" aria-pressed="true">全部</button><button class="history-filter" data-log-filter="attention" aria-pressed="false">需留意</button></div>
+          <div class="history-header"><span>时间与任务</span><span>执行结果</span></div>
+          <div id="log-list"></div>
+          <div class="history-pagination"><span id="log-summary" tabindex="-1"></span><button class="secondary hidden" id="show-more-logs">显示更多</button></div>
+        </div>
+      </section>
+      <section id="view-settings" class="view hidden">
+        <div class="page-heading"><h1>连接与设置</h1><button class="secondary" id="refresh-connection"><span data-icon="refresh-cw"></span>检查连接</button></div>
+        <div class="settings-grid">
+          <article class="glass settings-card"><h2>Codex 连接</h2><p class="muted" id="diagnostic-summary">正在检查本机安装与登录状态。</p><div id="capabilities"></div><details class="technical-details"><summary>连接详情</summary><label>Codex CLI 路径</label><code id="cli-path">自动发现</code><button class="secondary" id="choose-cli">选择 Codex 程序</button></details></article>
+          <article class="glass settings-card"><h2>运行偏好</h2>
+            <label class="field"><span>界面语言</span><select id="setting-language"><option value="system">跟随系统</option><option value="zh-CN">简体中文</option><option value="en">English</option></select></label>
+            <label class="setting-row"><span><b>倒计时悬浮球</b><small>在桌面显示，可拖动位置</small></span><input type="checkbox" id="setting-orb" class="switch" checked></label>
+            <label class="setting-row"><span><b>任务期间防止休眠</b><small>有启用任务时保持电脑唤醒</small></span><input type="checkbox" id="setting-awake" class="switch" checked></label>
+            <label class="field glass-setting"><span>玻璃透明度 <output id="glass-value" for="setting-glass">40%</output></span><input type="range" id="setting-glass" min="20" max="85" step="1" value="40"><small>调高可透出更多背景，调低让文字更清晰。</small></label>
+            <label class="field zone-setting"><span>计划时区</span><select id="setting-zone"><option value="America/Halifax">大西洋时间 · Halifax</option><option value="Asia/Shanghai">中国标准时间 · Shanghai</option><option value="America/New_York">美国东部时间 · New York</option><option value="America/Los_Angeles">美国太平洋时间 · Los Angeles</option><option value="Europe/London">英国时间 · London</option><option value="UTC">协调世界时 · UTC</option></select></label>
+          </article>
+        </div>
+        <article class="glass settings-card principles"><h2>运行说明</h2><p>关闭窗口后，助手留在托盘运行。请保持电脑开机且未锁屏；退出助手会停止后续调度，已经运行的 Codex 任务不会被中断。</p><p>额度恢复时先检查聊天是否仍在工作。权限请求、无法识别的选择、发送结果不确定的操作会标记为“需要处理”。</p><div class="shortcut-note"><span>暂停全部任务</span><kbd>Ctrl + Alt + Shift + S</kbd></div></article>
+        <div class="about-line"><span>Codex 定时助手</span><span id="version">v0.1.0</span><span>数据保存在本机</span></div>
+      </section>
+    </main>
+  </div>
+</div>
+<dialog id="task-dialog" aria-labelledby="dialog-title">
+  <form id="task-form">
+    <div class="dialog-header"><h2 id="dialog-title">新建任务</h2><button type="button" class="icon-button" id="close-dialog" aria-label="关闭"><span data-icon="x"></span></button></div>
+    <div class="dialog-body">
+      <div class="segmented"><button type="button" class="selected" data-kind="once"><span data-icon="clock-3"></span>定时发送</button><button type="button" data-kind="watch"><span data-icon="monitor"></span>持续看守</button></div>
+      <p class="field-help" id="mode-help">确认消息送达后，此定时任务结束。</p>
+      <label class="field"><span>任务名称</span><input id="task-title" maxlength="120" placeholder="例如：今晚完善项目" required></label>
+      <div class="field"><span>目标聊天</span></div>
+      <div id="target-fixed"><p id="legacy-target-note" class="field-help hidden">旧任务使用当前页面；保存修改前，请选择固定聊天。取消不会改变原任务。</p><details class="thread-picker" id="thread-picker" open><summary>从本机聊天中选择</summary><input id="thread-search" placeholder="搜索聊天名称" aria-label="搜索聊天"><div id="thread-options" class="thread-options"></div></details><p id="selected-thread" class="field-help hidden"></p><div class="inline-field"><input id="thread-link" placeholder="粘贴 Codex 聊天深度链接" aria-label="聊天深度链接"><button type="button" class="secondary" id="paste-link">粘贴</button></div><p class="field-help">在 Codex 聊天菜单中选择“复制 → 复制深度链接”。</p><button type="button" class="text-button" id="preview-thread">打开聊天核对<span data-icon="arrow-up-right"></span></button></div>
+      <div class="two-fields"><label class="field"><span id="schedule-label">执行时间</span><input type="datetime-local" id="scheduled-at" step="1" required></label><label class="field hidden" id="cutoff-field"><span>结束看守时间</span><input type="datetime-local" id="cutoff-at" step="1"></label></div>
+      <div class="schedule-shortcuts"><button type="button" class="secondary" id="use-quota-reset">使用额度刷新时间</button><label class="check-row"><input type="checkbox" id="quota-delay" checked><span>延后1分钟</span></label></div>
+      <p class="field-help" id="schedule-help">到点核对额度，尚未恢复会继续等待。</p>
+      <p class="field-help" id="zone-label"></p>
+      <label class="field"><span id="message-label">发送内容</span><textarea id="task-message" rows="3" maxlength="12000" placeholder="继续完成本聊天已经确认的任务。"></textarea></label>
+      <section id="image-input" class="image-input" aria-label="任务图片" aria-describedby="image-help">
+        <div class="image-toolbar"><span>图片 <span id="image-count">0 / 8</span></span><button type="button" class="secondary" id="choose-images">添加图片</button></div>
+        <input id="image-files" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" multiple hidden>
+        <p class="field-help" id="image-help">可拖入或粘贴 PNG、JPEG、WebP；每张10 MiB，合计32 MiB。</p>
+        <div id="image-list" class="image-list"></div><p id="image-status" class="field-help" role="status" aria-live="polite"></p>
+      </section>
+      <div id="watch-options" class="watch-options hidden"><label class="check-row"><input type="checkbox" id="auto-answer"><span>自动回复普通方案选择</span></label><p class="field-help" id="auto-answer-help">仅处理可以明确识别的普通问题。</p><textarea id="auto-reply" rows="3" maxlength="12000" aria-label="选择题回复模板"></textarea><label class="check-row"><input type="checkbox" id="unlimited-watch"><span>不限看守时长，直到目标完成或手动停止</span></label></div>
+      <label class="check-row enable-row"><input type="checkbox" id="enable-task" checked><span>保存后启用任务</span></label><div id="form-error" class="form-error hidden" role="alert"></div>
+    </div>
+    <div class="dialog-footer"><button type="button" class="secondary" id="cancel-dialog">取消</button><button type="submit" class="primary" id="save-task">保存任务</button></div>
+  </form>
+</dialog>
+<dialog id="confirm-dialog" class="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-description">
+  <div class="dialog-header"><h2 id="confirm-title">删除任务？</h2></div>
+  <div class="confirm-body"><p id="confirm-task-name"></p><p id="confirm-description">执行记录会保留。</p></div>
+  <div class="dialog-footer"><button type="button" class="secondary" id="confirm-cancel" autofocus>取消</button><button type="button" class="danger-button" id="confirm-delete">删除</button></div>
+</dialog>
+<div id="toast" class="toast hidden" role="status"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
+

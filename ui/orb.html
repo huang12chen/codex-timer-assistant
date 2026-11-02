@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>Codex 倒计时</title>
+  <link rel="stylesheet" href="orb.css">
+</head>
+<body>
+  <div class="orb-shell" id="orb" title="点击打开助手，拖动圆环移动">
+    <canvas class="orb-rim" width="1" height="1" aria-hidden="true" hidden></canvas>
+    <svg class="orb-ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="track" cx="60" cy="60" r="48"/><circle id="progress" cx="60" cy="60" r="48"/></svg>
+    <button type="button" class="orb-content" aria-label="打开 Codex 定时助手"><strong id="orb-time">待命</strong></button>
+    <span class="orb-led" id="orb-led" aria-hidden="true"></span>
+  </div>
+  <script type="module" src="orb.js"></script>
+</body>
+</html>

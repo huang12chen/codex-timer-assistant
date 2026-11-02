@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100" fill="none">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1600" y2="1100" gradientUnits="userSpaceOnUse"><stop stop-color="#e7edf8"/><stop offset=".55" stop-color="#eef3fa"/><stop offset="1" stop-color="#dae9f2"/></linearGradient>
+    <linearGradient id="silk" x1="70" y1="1080" x2="1350" y2="-100" gradientUnits="userSpaceOnUse"><stop stop-color="#9fbded"/><stop offset=".45" stop-color="#b4d8e7"/><stop offset=".75" stop-color="#d8e1f5"/><stop offset="1" stop-color="#c9c8e4"/></linearGradient>
+    <linearGradient id="light" x1="200" y1="1100" x2="1540" y2="100" gradientUnits="userSpaceOnUse"><stop stop-color="#eaf2ff"/><stop offset=".52" stop-color="#f5f9ff"/><stop offset="1" stop-color="#f4eef9"/></linearGradient>
+    <linearGradient id="edge" x1="0" y1="1020" x2="1430" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#88b0df" stop-opacity=".5"/><stop offset=".6" stop-color="#b2ccdd" stop-opacity=".2"/><stop offset="1" stop-color="#c1bbd8" stop-opacity=".3"/></linearGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="22"/></filter>
+  </defs>
+  <path fill="url(#base)" d="M0 0h1600v1100H0z"/>
+  <g filter="url(#soft)">
+    <path d="M-250 1110C370 1080 1380 680 1260-260" stroke="url(#silk)" stroke-width="490"/>
+    <path d="M-200 1000C430 1120 1380 660 1380-230" stroke="url(#light)" stroke-width="160"/>
+    <path d="M-240 1070C390 1160 1440 680 1460-180" stroke="url(#edge)" stroke-width="70"/>
+    <path d="M440 1360C910 980 1710 840 1810 40" stroke="url(#light)" stroke-width="290" opacity=".7"/>
+  </g>
+</svg>
