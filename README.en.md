@@ -6,13 +6,31 @@
 
 The screenshot uses sample data. This is an independent third-party application, not an OpenAI product. It uses your existing Codex sign-in and does not require a separate model API key.
 
-## Download and use
+## Download
 
-1. Install and sign in to the Codex desktop app, then open the target chat.
-2. Download the Windows x64 archive from [Releases](https://github.com/huang12chen/codex-timer-assistant/releases), extract it, and run the application.
-3. Under **Settings**, check the connection and time zone. If Codex is not detected, select the local `codex.exe` in connection details.
-4. Choose **New task**, select a local chat, and configure a scheduled message or watch. You can use the usage reset time and add a one-minute delay.
-5. Keep the computer awake and unlocked. Closing the window leaves the assistant in the tray; quitting it stops future scheduling.
+Install and sign in to the Codex desktop app. Download the Windows x64 archive from [Releases](https://github.com/huang12chen/codex-timer-assistant/releases), extract it, and run the application. Under **Settings**, check the connection and time zone; if Codex is not detected, select the local `codex.exe` in connection details.
+
+## How to use
+
+### 1. Choose a chat
+
+Select **New task**, choose **Scheduled message** or **Watch**, and enter a task name. Select a local chat or paste its Codex deep link.
+
+![New task: choose a local chat](assets/guide-select-en.png)
+
+### 2. Set the time and message
+
+Set when to run and what to send. **Use usage reset time** fills in the reset time, with a one-minute delay selected by default; you can change it. Leave **Enable task after saving** checked and select **Create and enable**.
+
+![Scheduled message: set the time and message](assets/guide-schedule-en.png)
+
+### 3. Set up a watch
+
+Choose **Watch** to set a start time, end time, and message for continuing work. You can also watch until the goal is complete or you stop it manually. The assistant stops watching after an explicit completion confirmation.
+
+![Watch: set the continuation message and duration](assets/guide-watch-en.png)
+
+Keep the computer awake and unlocked. Closing the window leaves the assistant in the tray; quitting it stops future scheduling.
 
 The interface language and time zone initially follow the system and can be changed in Settings. Drag the floating timer, click it to open the window, or right-click it to hide it. If it does not appear, quit the assistant and start it with `Try-Software-Rendering.cmd` from the archive.
 
